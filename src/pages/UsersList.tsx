@@ -6,6 +6,8 @@ import { auth } from "../auth";
 import type { User } from "../types/user";
 import UserForm from "./UserForm";
 import styles from "../styles/Users.module.css";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const UsersList: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -46,9 +48,11 @@ const UsersList: React.FC = () => {
     try {
       await api.delete(`/users/${id}`);
       setUsers(prev => prev.filter(u => u.id !== id));
+      toast.success("User deleted successfully", { position: "top-right" });
     } catch (err: unknown) {
       if (err instanceof Error) setError(err.message);
       else setError("Failed to delete user");
+      toast.error("Failed to delete user", { position: "top-right" });
     }
   };
 
@@ -62,11 +66,16 @@ const UsersList: React.FC = () => {
     setShowForm(false);
   };
 
-  const handleFormSave = (user: User, isNew: boolean) => {
-    if (isNew) setUsers(prev => [...prev, user]);
-    else setUsers(prev => prev.map(u => (u.id === user.id ? user : u)));
-    handleFormClose();
-  };
+const handleFormSave = (user: User, isNew: boolean) => {
+  if (isNew) {
+    setUsers(prev => [...prev, user]);
+    toast.success(`User ${user.userName} added successfully!`, { position: "top-right" });
+  } else {
+    setUsers(prev => prev.map(u => (u.id === user.id ? user : u)));
+    toast.success(`User ${user.userName} updated successfully!`, { position: "top-right" });
+  }
+  handleFormClose();
+};
 
   const handleLogout = () => {
     auth.clear();
@@ -75,6 +84,7 @@ const UsersList: React.FC = () => {
 
   return (
     <div className={styles["users-container"]}>
+      <ToastContainer autoClose={3000} />
       <div
         style={{
           display: "flex",

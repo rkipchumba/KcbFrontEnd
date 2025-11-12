@@ -93,3 +93,16 @@
   border: 1px solid #ccc;
 }
 
+.delete-btn {
+  background-color: #E53935; 
+  color: white;
+  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  background-color: #D32F2F; 
+  opacity: 0.9;
+}
