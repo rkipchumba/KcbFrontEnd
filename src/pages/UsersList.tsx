@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
@@ -15,6 +16,7 @@ const UsersList: React.FC = () => {
   const [showForm, setShowForm] = useState(false);
 
   const navigate = useNavigate();
+  const loggedInUser = auth.getUser();
 
   const fetchUsers = async (query?: string) => {
     setLoading(true);
@@ -32,6 +34,10 @@ const UsersList: React.FC = () => {
   };
 
   useEffect(() => {
+    if (!auth.isAuthenticated()) {
+      navigate("/", { replace: true });
+      return;
+    }
     fetchUsers();
   }, []);
 
@@ -63,23 +69,39 @@ const UsersList: React.FC = () => {
   };
 
   const handleLogout = () => {
-    auth.logout();
+    auth.clear();
     navigate("/", { replace: true });
   };
 
   return (
     <div className={styles["users-container"]}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h2>All Users</h2>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "1.5rem",
+        }}
+      >
+        <div>
+          <h2 style={{ marginBottom: "0.25rem" }}>All Users</h2>
+          {loggedInUser && (
+            <p style={{ color: "#004d4d", fontWeight: "500" }}>
+              Welcome: <strong>{loggedInUser.firstName}</strong>
+            </p>
+          )}
+        </div>
+
         <button
           onClick={handleLogout}
           style={{
             backgroundColor: "#004d4d",
             color: "white",
             border: "none",
-            padding: "0.5rem 1rem",
-            borderRadius: "4px",
+            padding: "0.6rem 1.2rem",
+            borderRadius: "6px",
             cursor: "pointer",
+            fontWeight: "bold",
           }}
         >
           Logout
@@ -92,8 +114,12 @@ const UsersList: React.FC = () => {
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
-        <button className={styles["search-btn"]} onClick={() => fetchUsers(search)}>Search</button>
-        <button className={styles["add-btn"]} onClick={() => setShowForm(true)}>Add New User</button>
+        <button className={styles["search-btn"]} onClick={() => fetchUsers(search)}>
+          Search
+        </button>
+        <button className={styles["add-btn"]} onClick={() => setShowForm(true)}>
+          Add New User
+        </button>
       </div>
 
       {error && <p className="error">{error}</p>}
@@ -114,11 +140,17 @@ const UsersList: React.FC = () => {
             {users.map(u => (
               <tr key={u.id}>
                 <td>{u.userName}</td>
-                <td>{u.firstName} {u.lastName}</td>
+                <td>
+                  {u.firstName} {u.lastName}
+                </td>
                 <td>{u.email}</td>
                 <td>
-                  <button className={styles["edit-btn"]} onClick={() => handleEdit(u)}>Edit</button>
-                  <button className={styles["delete-btn"]} onClick={() => handleDelete(u.id)}>Delete</button>
+                  <button className={styles["edit-btn"]} onClick={() => handleEdit(u)}>
+                    Edit
+                  </button>
+                  <button className={styles["delete-btn"]} onClick={() => handleDelete(u.id)}>
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))}
@@ -127,11 +159,7 @@ const UsersList: React.FC = () => {
       )}
 
       {showForm && (
-        <UserForm
-          user={editingUser}
-          onClose={handleFormClose}
-          onSave={handleFormSave}
-        />
+        <UserForm user={editingUser} onClose={handleFormClose} onSave={handleFormSave} />
       )}
     </div>
   );

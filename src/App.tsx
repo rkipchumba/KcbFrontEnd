@@ -1,17 +1,16 @@
-import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Login from "./pages/Login";
+import AuthPage from "./pages/AuthPage";
 import UsersList from "./pages/UsersList";
 
-const App: React.FC = () => {
+function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<AuthPage />} />
         <Route path="/users" element={<UsersList />} />
       </Routes>
     </Router>
   );
-};
+}
 
 export default App;
