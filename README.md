@@ -13,5 +13,5 @@ It connects to a mock REST API (`https://69147c603746c71fe0487070.mockapi.io/api
 ## Setup / Run Locally
 1. Clone the repo:
 ```bash
-git clone https://github.com/yourusername/KcbTask.git
+git clone https://github.com/rkipchumba/KcbFrontEnd.git
 cd KcbTask
